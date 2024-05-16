@@ -2,6 +2,7 @@ import os
 from multiprocessing import Pool
 from sys import stdout
 from urllib.error import HTTPError
+from urllib.parse import urlparse
 
 import requests
 import urllib3
@@ -47,8 +48,9 @@ def batch_download(urls):
         if not os.path.exists(path):
             os.makedirs(path)
         pool = Pool(8)
-        for index, url in enumerate(urls):
-            file = os.path.join(path, '%d.ts' % (index + 1))
+        for url in enumerate(urls):
+            filename = urlparse(url).path.split('/')[-1]
+            file = os.path.join(path, filename)
             pool.apply_async(download, args=(url, file))
         pool.close()
         pool.join()
