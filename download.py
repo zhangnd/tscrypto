@@ -20,7 +20,7 @@ def request(method, url, **kwargs):
         print('ConnectionError:', error)
 
 
-def download(url, file):
+def download(url, file, index):
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
     }
@@ -38,6 +38,8 @@ def download(url, file):
                 stdout.write('下载进度: %.2f%%\r' % float(size / content_length * 100))
                 if size / content_length == 1:
                     print('\n')
+        command = 'openssl aes-128-cbc -d -in %s -out tmp/%d.ts -nosalt -K c7719993cb5b81ceb148f4a205d48f05 -iv 00000000000000000000000000000000' % (file, index + 1)
+        os.system(command)
     else:
         print('下载出错')
 
@@ -48,12 +50,17 @@ def batch_download(urls):
         if not os.path.exists(path):
             os.makedirs(path)
         pool = Pool(8)
-        for url in urls:
+        for index, item in urls:
+            url = item[index]
             filename = urlparse(url).path.split('/')[-1]
             file = os.path.join(path, filename)
-            pool.apply_async(download, args=(url, file))
+            pool.apply_async(download, args=(url, file, index))
         pool.close()
         pool.join()
+        file = 'input.txt'
+        with open(file, 'w') as f:
+            for i in range(0, len(urls)):
+                f.write("file '%d.ts'\n" % (i + 1))
 
 
 def main():
