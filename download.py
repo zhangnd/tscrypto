@@ -48,7 +48,7 @@ def batch_download(urls):
         if not os.path.exists(path):
             os.makedirs(path)
         pool = Pool(8)
-        for url in enumerate(urls):
+        for url in urls:
             filename = urlparse(url).path.split('/')[-1]
             file = os.path.join(path, filename)
             pool.apply_async(download, args=(url, file))
