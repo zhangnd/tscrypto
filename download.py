@@ -59,7 +59,7 @@ def batch_download(urls):
         file = 'input.txt'
         with open(file, 'w') as f:
             for i in range(0, len(urls)):
-                f.write("file '%d.ts'\n" % (i + 1))
+                f.write("file 'tmp/%d.ts'\n" % (i + 1))
 
 
 def main():
